@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ごきげんみくじ</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<main>
+  <!-- TOP画面 -->
+  <section class="top-screen">
+    <h1>ごきげんみくじ</h1>
+
+    <p>今日のあなたの運勢は？</p>
+
+    <button id="drawButton">おみくじを引く</button>
+  </section>
+
+  <section id="result">
+      <!-- 引く前の案内（1回目の抽選でJSが非表示にする） -->
+      <p id="resultPlaceholder">ここに運勢が表示されます</p>
+
+      <!--
+        結果カード（最初は hidden）
+        data-state    : "open"（通常）/ "sealed"（サプライズ吉の開封前）
+        data-category : "normal" / "fantasy" / "special" / "ultra_rare"
+      -->
+      <article id="omikujiCard" class="omikuji-card" data-state="open" data-category="normal" aria-live="polite" hidden>
+
+        <!-- 1. 図鑑No. -->
+        <p class="card-no">第 <span id="fortuneNo">001</span> 番</p>
+
+       
+        <!-- 2. 運勢名（縦書き・固定高）＋ 3. 一言 -->
+        <header class="card-head">
+        <div class="fortune-name-frame">
+        <h2 id="fortuneName" class="fortune-name secret">なんか吉</h2>
+        </div>
+
+        <!-- キャラクター画像 -->
+        <div class="fortune-image">
+        <img id="fortuneImage" src="" alt="">
+        </div>
+
+       <p id="fortuneOneliner" class="fortune-oneliner secret">理由はないけど、悪い日じゃない。</p>
+      </header>
+
+
+        <!-- 8. サプライズ吉の箱（開封前だけ表示） -->
+        <div id="surpriseBox" class="surprise-box" hidden>
+
+        <!-- 開封前 -->
+        <div id="surpriseClosedContent">
+        <button
+        id="openBoxButton"
+        class="open-box-button"
+        type="button"
+        aria-label="箱を開ける"
+    >
+      <img
+        src="./images/files/surprise_closed_512.png"
+        srcset="./images/files/surprise_closed_512.png 1x, ./images/files/surprise_closed.png 2x"
+        alt="水引のついた閉じた箱"
+      >
+    </button>
+
+    <p class="surprise-hint">箱をタップして開けてください</p>
+  </div>
+
+     <!-- 開封後 -->
+<div id="surpriseOpenedContent" hidden>
+  <img
+    class="surprise-open-image"
+    src="./images/files/surprise_open_512.png"
+    srcset="./images/files/surprise_open_512.png 1x, ./images/files/surprise_open.png 2x"
+    alt="開いた水引の箱"
+  >
+</div>
+
+  </div>
+
+        <!-- 4. メッセージ（開封前でも表示） -->
+        <section class="card-section">
+          <h3 class="section-title">今日のメッセージ</h3>
+          <p id="fortuneMessage" class="fortune-message">神様もそう言っています。あまり深く考えずに過ごしましょう。</p>
+        </section>
+
+        <!-- 5. ラッキーアイテム -->
+        <section class="card-section secret">
+          <h3 class="section-title">ラッキーアイテム</h3>
+          <p id="luckyItem" class="lucky-item">お気に入りのブックカバー</p>
+        </section>
+
+        <!-- 6. 今日のミッション -->
+        <section class="card-section secret">
+          <h3 class="section-title">今日のミッション</h3>
+          <p id="mission" class="mission">ちょっとだけ自分を褒める</p>
+        </section>
+
+        <!-- 7. おまけ枠（おまけつき吉のときだけ表示） -->
+<section id="bonusSection" class="card-section bonus" hidden>
+  <h3 class="section-title">おまけ</h3>
+
+  <!-- 開封前：巾着袋 -->
+  <div id="bonusClosedContent">
+    <button
+      id="openBonusButton"
+      class="open-bonus-button"
+      type="button"
+      aria-label="巾着袋を開ける"
+    >
+      <img
+        class="bonus-bag-image"
+        src="./images/files/bonus_bag_512.png"
+        width="120"
+        height="120"
+        alt="おまけの袋"
+      >
+    </button>
+    <p class="bonus-hint">おまけを入れておいた。袋を、つついてみよ。</p>
+  </div>
+
+  <!-- 開封後：おまけ -->
+  <div id="bonusOpenedContent" hidden>
+    <p class="bonus-row">
+      <span class="bonus-label">ラッキーポーズ</span>
+      <span id="bonusPose"></span>
+    </p>
+
+    <p class="bonus-row">
+      <span class="bonus-label">神様のしるし</span>
+      <span id="bonusStamp" class="bonus-stamp">✨</span>
+    </p>
+  </div>
+</section>
+  </main>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+/* =========================================
+   ごきげんみくじ style.css
+   ページ全体・TOP画面・おみくじカードのデザイン
+   カテゴリー別の装飾・開封演出
+   ========================================= */
+
+/* ---------- 色の定義（ここだけ変えれば全体に反映） ---------- */
+:root {
+  --color-bg: #F5EEDC;      /* 背景（和紙） */
+  --color-text: #2B2420;    /* 文字（墨） */
+  --color-main: #8E2F3A;    /* メイン（えんじ） */
+  --color-accent: #C8372D;  /* 朱色（特別枠の枠線など） */
+  --color-special: #B8913A; /*  金色（幻想生物・超レア） */
+
+  /* 明朝は見出し用、本文は読みやすいゴシック */
+  --font-mincho: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
+  --font-base: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+
+/* hidden属性が、あとで書くdisplay指定に負けないようにする */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- ページ全体：背景・文字・中央寄せ ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  background-image: radial-gradient(
+    rgba(142, 47, 58, 0.06) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 20px 20px;
+  color: var(--color-text);
+  font-family: var(--font-base);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+main {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  text-align: center;
+}
+/* ---------- TOP画面の装飾 ---------- */
+.top-screen {
+  max-width: 360px;
+  margin: 24px auto;
+  padding: 32px 20px;
+  background: #FBF6E9;
+  border: 2px solid var(--color-main);
+  border-radius: 16px;
+  outline: 1px solid var(--color-main);
+  outline-offset: -8px;
+  text-align: center;
+}
+
+.top-screen::before {
+  content: "● ● ●";
+  display: block;
+  margin-bottom: 12px;
+  color: var(--color-accent);
+  font-size: 10px;
+  letter-spacing: 0.5em;
+}
+
+/* ---------- 抽選後のTOP画面 ---------- */
+.top-screen.is-drawn h1,
+.top-screen.is-drawn p {
+  display: none;
+}
+
+.top-screen.is-drawn {
+  margin: 8px auto;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.top-screen.is-drawn::before {
+  display: none;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  color: var(--color-main);
+  font-family: var(--font-mincho);
+  font-size: clamp(1.8rem, 7vw, 2.4rem);
+  letter-spacing: 0.15em;
+}
+
+/* ---------- ボタン ---------- */
+button {
+  font-family: inherit;
+}
+
+#drawButton {
+  min-height: 3rem;
+  margin: 0.5rem 0 1.5rem;
+  padding: 0.6rem 2rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--color-main);
+  color: var(--color-bg);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+#drawButton:hover {
+  background-color: var(--color-accent);
+}
+
+#drawButton:focus-visible {
+  outline: 3px solid var(--color-special);
+  outline-offset: 3px;
+}
+
+/* ---------- 引く前の案内 ---------- */
+#resultPlaceholder {
+  margin: 2rem 0;
+  opacity: 0.7;
+}
+
+/* ---------- おみくじカードの基本デザイン ----------
+   カードごとに変わる色は、変数にまとめてある。
+   カテゴリー別の見た目は、この変数を上書きするだけで作る（下の「カテゴリー別」参照）
+     --frame-color : 枠線・見出しの下線
+     --card-bg     : カードの背景
+     --card-text   : カードの文字色
+     --card-accent : 番号・見出しの文字色
+*/
+.omikuji-card {
+  --frame-color: var(--color-main);
+  --card-bg: rgba(255, 255, 255, 0.5); /* 和紙より少し明るい紙 */
+  --card-text: var(--color-text);
+  --card-accent: var(--color-main);
+
+  padding: 1.5rem 1.25rem;
+  border: 4px double var(--frame-color);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--card-text);
+  text-align: left;
+}
+
+.card-no {
+  margin: 0 0 1rem;
+  color: var(--card-accent);
+  font-family: var(--font-mincho);
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+.card-head {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+/* ---------- 運勢キャラクター画像 ---------- */
+.fortune-image {
+  margin: 0.75rem 0;
+  text-align: center;
+}
+
+.fortune-image img {
+  display: block;
+  height: 100px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* ---------- SR専用装飾 ---------- */
+.fortune-image[data-category="fantasy"] {
+  position: relative;
+  isolation: isolate;
+}
+
+.fortune-image[data-category="fantasy"]::before {
+  content: "";
+  position: absolute;
+  width: 190px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(220, 183, 91, 0.28) 0%,
+    rgba(220, 183, 91, 0.16) 55%,
+    rgba(220, 183, 91, 0) 72%
+  );
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+/* SR専用：画像サイズ */
+.fortune-image[data-category="fantasy"] img {
+  height: 130px;
+  width: auto;
+}
+
+/* ---------- 大明神専用装飾 ---------- */
+.fortune-image[data-category="ultra_rare"] img {
+  height: 200px;
+  width: auto;
+}
+
+
+/* ---------- 運勢名（縦書き） ----------
+   運勢名の長さに合わせて高さを自動調整する。
+   文字サイズは clamp() で画面幅に合わせて変化する。
+   サプライズ吉の開封前は、運勢名を非表示にする。
+*/
+.fortune-name-frame {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 7rem;
+  font-size: clamp(1.6rem, 7vw, 2rem);
+}
+
+.fortune-name {
+  margin: 0;
+  font-family: var(--font-mincho);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+.fortune-oneliner {
+  margin: 0.5rem 0 0;
+}
+
+.card-section {
+  margin-top: 1.25rem;
+}
+
+.section-title {
+  margin: 0 0 0.25rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--frame-color);
+  color: var(--card-accent);
+  font-family: var(--font-mincho);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.card-section p {
+  margin: 0.4rem 0 0;
+}
+
+/* ---------- カテゴリー別の色分け ----------
+   通常吉(normal)は上の基本デザイン（えんじの二重枠）のまま。
+   ほかのカテゴリーは、枠の色などの変数を上書きするだけ。 */
+
+/* 特別枠（おまけつき吉・サプライズ吉）：朱色の二重枠。枠線だけ朱色にして控えめに */
+.omikuji-card[data-category="special"] {
+  --frame-color: var(--color-accent);
+}
+
+/* 幻想生物：金色の枠。少し太くして通常より格を上げる */
+.omikuji-card[data-category="fantasy"] {
+  --frame-color: var(--color-special);
+  border-width: 6px;
+}
+
+/* ごきげん大明神：えんじ地に金の枠。外側にえんじの縁を足して一番豪華に
+   ※金とえんじは文字にすると読みにくい組み合わせなので、文字は和紙色にして、金は線に使う */
+.omikuji-card[data-category="ultra_rare"] {
+  --frame-color: var(--color-special);
+  --card-bg: var(--color-main);
+  --card-text: var(--color-bg);
+  --card-accent: var(--color-bg);
+  border-width: 6px;
+  box-shadow: 0 0 0 3px var(--color-main);
+}
+
+/* ---------- メッセージ（データ内の改行を、そのまま表示する） ---------- */
+.fortune-message {
+  white-space: pre-line;
+}
+
+/* 文節のかたまり。折り返すときは、かたまりの区切りで折り返される */
+.phrase {
+  display: inline-block;
+}
+
+/* ---------- おまけ枠（おまけつき吉） ---------- */
+.bonus-row {
+  margin: 0.6rem 0 0;
+}
+
+.bonus-label {
+  display: block;
+  color: var(--card-accent);
+  font-size: 0.95rem;
+}
+
+.bonus-stamp {
+  font-size: 2rem;
+}
+
+/* 巾着袋のボタン */
+.open-bonus-button {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.open-bonus-button:active {
+  transform: scale(0.96);
+}
+
+.open-bonus-button:focus-visible {
+  outline: 2px solid var(--card-accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* 巾着袋の画像 */
+.bonus-bag-image {
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem auto 0;
+  transform-origin: 50% 90%;
+  animation: bonusBagWiggle 3s ease-in-out infinite;
+}
+
+/* 揺れて、少し止まる */
+@keyframes bonusBagWiggle {
+  0%, 55%, 100% { transform: rotate(0deg); }
+  65% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+  85% { transform: rotate(-2deg); }
+}
+
+/* 動きを減らす設定への対応 */
+@media (prefers-reduced-motion: reduce) {
+  .bonus-bag-image {
+    animation: none;
+  }
+}
+
+/* 袋の下のヒント */
+.bonus-hint {
+  margin: 0.2rem 0 0;
+  color: var(--card-accent);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.bonus-hint::after {
+  content: " ▼";
+  display: block;
+  margin-top: 0.2rem;
+}
+
+/* ---------- サプライズ吉：開封前の隠し方 ----------
+   data-state="sealed" のあいだ、.secret の要素を非表示にする。
+   ・運勢名・一言は display:none で非表示にする。
+   ・ラッキーアイテム・ミッションはセクションごと非表示にする。
+   ・メッセージと図鑑No.は開封前も表示する。
+*/
+.omikuji-card[data-state="sealed"] .secret {
+  visibility: hidden;
+}
+
+.omikuji-card[data-state="sealed"] .card-section.secret {
+  display: none;
+}
+
+/* ---------- サプライズ吉の箱画像 ----------
+   通常のレイアウトで配置し、文字と重ねない */
+.surprise-box {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.open-box-button {
+  display: block;
+  max-width: 100%;
+  padding: 0.25rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.open-box-button img {
+  display: block;
+  width: min(180px, 100%);
+  height: auto;
+  margin: 0 auto;
+}
+
+.open-box-button:focus-visible {
+  outline: 3px solid var(--color-special);
+  outline-offset: 4px;
+}
+
+.surprise-open-image,
+.bonus-bag-image {
+  display: block;
+  width: min(180px, 100%);
+  height: auto;
+  margin: 0 auto 16px;
+}
+
+#surpriseOpenedContent {
+  width: 100%;
+  text-align: center;
+}
+
+.surprise-hint {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ---------- サプライズ吉：開封前のレイアウト調整 ---------- */
+.omikuji-card[data-state="sealed"] .fortune-name-frame {
+  min-height: 0;
+}
+
+.omikuji-card[data-state="sealed"] .fortune-name {
+  display: none;
+}
+
+.omikuji-card[data-state="sealed"] .fortune-oneliner {
+  display: none;
+}
+
+.omikuji-card[data-state="sealed"] .card-head {
+  margin-bottom: 0;
+}
